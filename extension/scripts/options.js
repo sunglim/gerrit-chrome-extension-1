@@ -24,7 +24,7 @@ function restore_options() {
   document.getElementById('uname').value = getLocalStorageValue('uname', '');
   document.getElementById('refresh').value = getLocalStorageValue('refresh', '1');
   document.getElementById('http_password').value = getLocalStorageValue('http_password', '');
-  document.getElementById('query').value = getLocalStorageValue('query', 
+  document.getElementById('query').value = getLocalStorageValue('query',
     'status:open+(reviewer:self OR owner:self)');
 }
 

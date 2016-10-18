@@ -43,6 +43,12 @@ function getVerified(change) {
   return td;
 }
 
+function updateTab(e) {
+  chrome.tabs.update(null, {
+      url: BASE_URL + '/' + e.getAttribute('change-id')
+    });
+}
+
 function drawUi(items) {
   var list = document.getElementById('list_body');
   list.innerHTML = '';
@@ -63,11 +69,7 @@ function drawUi(items) {
     var a = document.createElement('a');
     a.href = '#';
     var BASE_URL = localStorage.api_endpoint;
-    a.addEventListener('click', function(e) {
-      chrome.tabs.update(null, {
-          url: BASE_URL + '/' + this.getAttribute('change-id')
-      });
-    });
+    a.addEventListener('click', updateTab);
 
     a.setAttribute('change-id', change._number);
     a.textContent = change._number;
@@ -98,7 +100,7 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
     drawUi({
         'changes': changes.changes.newValue,
         'timestamps': changes.timestamps.newValue
-    });
+      });
   } else {
     chrome.storage.local.get(['changes', 'timestamps'], drawUi);
   }

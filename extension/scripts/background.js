@@ -105,7 +105,7 @@ chrome.webNavigation.onCommitted.addListener(onNavigate, {
   });
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    if (request.method == "getRootUrl")
+    if (request.method == 'getRootUrl')
       sendResponse({data: localStorage.api_endpoint});
     else
       sendResponse({});
