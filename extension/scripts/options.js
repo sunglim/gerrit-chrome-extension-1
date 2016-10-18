@@ -1,11 +1,11 @@
 // Saves options to localStorage.
 function save_options() {
   try {
-    localStorage['api_endpoint'] = document.getElementById('api_endpoint').value.replace(/\/*$/, '');
-    localStorage['uname'] = document.getElementById('uname').value || '';
-    localStorage['refresh'] = document.getElementById('refresh').value || '';
-    localStorage['http_password'] = document.getElementById('http_password').value || '';
-    localStorage['query'] = document.getElementById('query').value || '';
+    localStorage.api_endpoint = document.getElementById('api_endpoint').value.replace(/\/*$/, '');
+    localStorage.uname = document.getElementById('uname').value || '';
+    localStorage.refresh = document.getElementById('refresh').value || '';
+    localStorage.http_password = document.getElementById('http_password').value || '';
+    localStorage.query = document.getElementById('query').value || '';
     // TODO: chrome.permissions.request
     chrome.runtime.reload();
   } catch (e) {
@@ -22,30 +22,11 @@ function getLocalStorageValue(key, def) {
 function restore_options() {
   document.getElementById('api_endpoint').value = getLocalStorageValue('api_endpoint', '');
   document.getElementById('uname').value = getLocalStorageValue('uname', '');
-  document.getElementById('refresh').value = getLocalStorageValue('refresh', '5');
+  document.getElementById('refresh').value = getLocalStorageValue('refresh', '1');
   document.getElementById('http_password').value = getLocalStorageValue('http_password', '');
-  document.getElementById('query').value = getLocalStorageValue('query', '');
-}
-
-function updateTestUrl() {
-  var query = document.getElementById('query').value;
-  if (!query) {
-    query = 'is:open+reviewer:self+-owner:self';
-  }
-  var url = document.getElementById('api_endpoint').value +
-      '/#/q/' + query;
-  var div = document.getElementById('test-url');
-  div.innerHTML = '';
-  var a = document.createElement('a');
-  a.href = url;
-  a.target = '_blank';
-  a.textContent = url;
-  div.appendChild(a);
+  document.getElementById('query').value = getLocalStorageValue('query', 
+    'status:open+(reviewer:self OR owner:self)');
 }
 
 document.addEventListener('DOMContentLoaded', restore_options);
 document.querySelector('#save').addEventListener('click', save_options);
-
-var testUrlDiv = document.getElementById('test-url');
-document.getElementById('api_endpoint').addEventListener('keyup', updateTestUrl);
-document.getElementById('query').addEventListener('keyup', updateTestUrl);

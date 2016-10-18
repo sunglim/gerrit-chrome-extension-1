@@ -1,3 +1,7 @@
+document.addEventListener('DOMContentLoaded', function() {
+  chrome.storage.local.get(['changes', 'timestamps'], drawUi);
+});
+
 function getDelta(change) {
   var td = document.createElement('td');
   var ins = change.insertions ? change.insertions : 0;
@@ -16,10 +20,10 @@ function getCodeReview(change) {
   var td = document.createElement('td');
   td.textContent = cr == 2 ? '+2'
     : cr == 1 ? '+1'
-    : cr == 0 ? ''
+    : cr === 0 ? ''
     : cr == -1 ? '-1'
     : '-2';
-  td.style['color'] = cr > 0 ? 'green'
+  td.style.color = cr > 0 ? 'green'
     : cr < 0 ? 'red'
     : '';
   return td;
@@ -33,19 +37,19 @@ function getVerified(change) {
   td.textContent = verified > 0 ? '+1'
     : verified < 0 ? '-1'
     : '';
-  td.style['color'] = verified > 0 ? 'green'
+  td.style.color = verified > 0 ? 'green'
     : verified < 0 ? 'red'
     : '';
   return td;
 }
 
-function initUI(items) {
+function drawUi(items) {
   var list = document.getElementById('list_body');
   list.innerHTML = '';
   for (var i = 0; i < items.changes.length; i++) {
     var change = items.changes[i];
     if (change.reviewed)
-        continue;
+      continue;
 
     try {
       change.read = new Date(items.timestamps[change._number]) >= new Date(change.updated);
@@ -58,7 +62,7 @@ function initUI(items) {
 
     var a = document.createElement('a');
     a.href = '#';
-    var BASE_URL = localStorage['api_endpoint'];
+    var BASE_URL = localStorage.api_endpoint;
     a.addEventListener('click', function(e) {
       chrome.tabs.update(null, {
           url: BASE_URL + '/' + this.getAttribute('change-id')
@@ -66,7 +70,7 @@ function initUI(items) {
     });
 
     a.setAttribute('change-id', change._number);
-    a.textContent = 'cl/' + change._number;
+    a.textContent = change._number;
     link.appendChild(a);
 
     message.textContent = change.subject;
@@ -89,17 +93,13 @@ function initUI(items) {
   }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-  chrome.storage.local.get(['changes', 'timestamps'], initUI);
-});
-
 chrome.storage.onChanged.addListener(function(changes, namespace) {
   if (changes.changes && changes.timestamps) {
-    initUI({
+    drawUi({
         'changes': changes.changes.newValue,
         'timestamps': changes.timestamps.newValue
     });
   } else {
-    chrome.storage.local.get(['changes', 'timestamps'], initUI);
+    chrome.storage.local.get(['changes', 'timestamps'], drawUi);
   }
 });
